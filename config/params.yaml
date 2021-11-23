@@ -1,0 +1,5 @@
+nominal_traj_topic: /target_cart_pose
+nominal_traj_topic_twist: /target_cart_twist
+#current_traj_topic: /plan_hw/gt/pose_cur
+current_traj_topic: /current_pose
+human_traj_topic : /human_target

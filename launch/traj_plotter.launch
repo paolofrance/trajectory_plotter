@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find traj_plotter)/config/params.yaml" />
+  <node name="traj_plotter" pkg="traj_plotter" type="traj_plotter.py" output="screen"/>
+</launch>
