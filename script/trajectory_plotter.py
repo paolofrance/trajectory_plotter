@@ -42,31 +42,24 @@ class Plotter:
 
         self.circle1 = plt.Circle((0.16, -0.16), 0.03, color='r')
 
-        # self.move_group = moveit_commander.MoveGroupCommander("ur5_lab", "robot_description", "", 20)
-        # self.pose_0 = self.move_group.get_current_pose().pose
-
     def nominal_callback(self, data):
-        self.x_nom = data.pose.position.x
-        self.y_nom = data.pose.position.y
-        self.show_nom = True
         if self.init_pose:
             self.x_init = data.pose.position.x
             self.y_init = data.pose.position.y
             self.init_pose = False
+        self.x_nom = data.pose.position.x
+        self.y_nom = data.pose.position.y
+        self.show_nom = True
 
     def current_callback(self, data):
 
         if self.pose_zeroing:
             self.x_0 = data.pose.position.x
             self.y_0 = data.pose.position.y
-            # self.x_0 = data.position.x
-            # self.y_0 = data.position.y
             self.pose_zeroing = False
 
-        self.x_cur = data.pose.position.x - self.x_0
-        self.y_cur = data.pose.position.y - self.y_0
-        # self.x_cur = data.position.x - self.x_0
-        # self.y_cur = data.position.y - self.y_0
+        self.x_cur = data.pose.position.x
+        self.y_cur = data.pose.position.y
 
         self.show_cur = True
 
@@ -84,18 +77,18 @@ if __name__ == '__main__':
     current_traj_topic = rospy.get_param('current_traj_topic')
     human_traj_topic   = rospy.get_param('human_traj_topic'  )
 
-    axis = [-0.3, 0.3, -0.3, 0.3] # gt traj deformation
-    axis = [-0.4, 0.4, -0.3, 0.3] # gt traj deformation
-    # axis = [ -0.1, 0.5, -0.3, 0.3] # ioc sin
+    delta_axis = [-0.3, 0.3, -0.3, 0.3] # centered
+    delta_axis = [0.1, 0.6, 0.3, 0.3] # left
 
     fig, Ax = plt.subplots(1)
 
     plt.ion()
-    plt.axis(axis)
     my_plotter = Plotter(Ax)
     nominal_sub = rospy.Subscriber(nominal_traj_topic, PoseStamped, my_plotter.nominal_callback)
     current_sub = rospy.Subscriber(current_traj_topic, PoseStamped, my_plotter.current_callback)
     human_sub   = rospy.Subscriber(human_traj_topic  , PoseStamped, my_plotter.human_callback  )
+
+    plt.ion()
 
     rate = rospy.Rate(125)
 
@@ -123,9 +116,10 @@ if __name__ == '__main__':
 
         if my_plotter.x_init-0.02 < my_plotter.x_nom < my_plotter.x_init+0.02 and my_plotter.y_init-0.02 < my_plotter.y_nom < my_plotter.y_init+0.02 :
             my_plotter.ax.clear()
-            plt.axis(axis)
         my_plotter.ax.clear()
+        axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + delta_axis[1], my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
         plt.axis(axis)
+        plt.grid()
 
 
         rate.sleep()

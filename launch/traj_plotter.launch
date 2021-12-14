@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <rosparam command="load" file="$(find traj_plotter)/config/params.yaml" />
-  <node name="traj_plotter" pkg="traj_plotter" type="traj_plotter.py" output="screen"/>
+  <rosparam command="load" file="$(find trajectory_plotter)/config/params.yaml" />
+  <node name="trajectory_plotter" pkg="trajectory_plotter" type="trajectory_plotter.py" output="screen"/>
 </launch>

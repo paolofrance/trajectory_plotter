@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>traj_plotter</name>
+  <name>trajectory_plotter</name>
   <version>0.0.0</version>
   <description>The traj_plotter package</description>
 
