@@ -1,0 +1,7 @@
+sampling_time: 0.008
+
+wrench_topic    : "filtered_wrench_base"
+vel_topic       : "current_velocity"
+assistance_topic: "assistance"
+
+max_fl: 0.007
