@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
 # license removed for brevity
-
-# import random
 import numpy as np
 import rospy
 import matplotlib.pyplot as plt
-# import numpy as np
-# import math
 from geometry_msgs.msg import PoseStamped
-# import time
-# import moveit_commander
-# import tf
-# from tf import listener
 
 
 class Plotter:
@@ -86,13 +78,13 @@ def human_target(x1, x2, x3, x4, x5, ampl):
 
     x_human_target = np.arange(0, x5, 0.001)
 
-    y1 = np.full(int(x1 * 1000), 0)
+    y1   = np.full(int(x1 * 1000), 0)
     x_12 = np.linspace(start=x1, stop=x2, num=round((x2 - x1), 2) * 1000, endpoint=False)
-    y2 = ampl * 0.5 * (1 - np.cos(np.pi * (x_12 - x1) / (x2 - x1)))
-    y3 = np.full(int(round((x3 - x2), 2) * 1000), ampl)
+    y2   = ampl * 0.5 * (1 - np.cos(np.pi * (x_12 - x1) / (x2 - x1)))
+    y3   = np.full(int(round((x3 - x2), 2) * 1000), ampl)
     x_34 = np.linspace(start=x3, stop=x4, num=round((x4 - x3), 2) * 1000, endpoint=False)
-    y4 = ampl * 0.5 * (1 + np.cos(np.pi * (x_34 - x3) / (x4 - x3)))
-    y5 = np.full(int(round((x5 - x4), 2) * 1000), 0)
+    y4   = ampl * 0.5 * (1 + np.cos(np.pi * (x_34 - x3) / (x4 - x3)))
+    y5   = np.full(int(round((x5 - x4), 2) * 1000), 0)
 
     y_human_target = np.concatenate((y1, y2, y3, y4, y5))
 
@@ -109,10 +101,8 @@ if __name__ == '__main__':
     current_traj_topic = rospy.get_param('current_traj_topic')
     human_traj_topic   = rospy.get_param('human_traj_topic')
 
-    # delta_axis = [0.1, 0.6, 0.3, 0.3] # left
-    # delta_axis = [0.1, 0.1, 0.1, 0.9] # load - Z
+    # Define the margin / size of the plot window
     delta_axis = [0.1, 0.1, 0.1, 0.2]  # all view
-    # delta_axis = [0.4, 0.4, 0.1, 0.1] # all view
 
     fig, Ax = plt.subplots(1)
 
@@ -139,35 +129,21 @@ if __name__ == '__main__':
                 obst = plt.Circle((obst_x, obst_y), 0.03, color='r')
                 my_plotter.ax.add_patch(obst)
             my_plotter.show_nom = False
-            # my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'om')
             my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
-            # plt.draw()
-            # plt.pause(0.001)
 
         if my_plotter.show_cur:
             my_plotter.show_cur = False
-            # my_plotter.ax.plot(my_plotter.x_cur, my_plotter.y_cur, 'og')
             my_plotter.ax.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Current Pose')
-            # plt.draw()
-            # plt.pause(0.001)
 
         if my_plotter.show_hum:
             my_plotter.show_hum = False
-            # my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob')
             my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
-            # plt.draw()
-            # plt.pause(0.001)
 
         plt.draw()
         plt.legend()
         plt.pause(0.001)
 
-        # if my_plotter.x_init-0.02 < my_plotter.x_nom < my_plotter.x_init+0.02 and
-        # my_plotter.y_init-0.02 < my_plotter.y_nom < my_plotter.y_init+0.02 :
-        # then:    my_plotter.ax.clear()
         my_plotter.ax.clear()
-        # axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + delta_axis[1],
-        # my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
         axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + end_point + delta_axis[1],
                 my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
         plt.axis(axis)
