@@ -4,6 +4,7 @@ import copy
 import numpy as np
 import rospy
 from geometry_msgs.msg import PoseStamped, Pose
+# from std_msgs.msg import Float32
 import os
 import signal
 import subprocess
@@ -28,6 +29,7 @@ def traj_publisher():
     nominal_traj_topic = rospy.get_param('nominal_traj_topic')
     human_traj_topic   = rospy.get_param('human_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
+    # obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
     current_sub        = rospy.Subscriber(current_traj_topic  , PoseStamped, cpm.current_callback)
 
     print('\n PUBLISHED TOPICS:')
@@ -36,6 +38,7 @@ def traj_publisher():
 
     nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size = 10)
     hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size = 10)
+    # obst_pub = rospy.Publisher(obst_x_coord_topic, Float32, queue_size=10)
     rate     = 125.0
     ros_rate = rospy.Rate(rate)
     t        = 0.0
@@ -52,7 +55,9 @@ def traj_publisher():
     x4 = 0.45           # reach the nom traj
     x5 = 0.5            # end
 
-    wait = 3
+    # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
+    wait = 2
+    end_wait = 1
 
     rospy.sleep(1)
 
@@ -75,8 +80,25 @@ def traj_publisher():
         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         print("Acquisition of bag record, DON'T QUIT \n")
+    else:
+        run = '0'
+        print("Script is running - NO ACQUISITION \n")
+
+    # rnd_obs = input("Do you want rand obstacle? y/n \n")
+    # if rnd_obs == 'y' or rnd_obs == 'Y':
+    #     rand_obst = True
+    # else:
+    #     rand_obst = False
+
 
     while run != "stop" and (not rospy.is_shutdown()):
+        # x_coord_obst = Float32()
+        # if t == 0 and rand_obst == True:
+        #     x_coord_obst = np.random.randint(100, 400, 1) / 1000
+        #     tmp = x_coord_obst
+        # else:
+        #     x_coord_obst = tmp
+
         t += 1.0/rate
 
         # HUMAN POSE
@@ -86,42 +108,63 @@ def traj_publisher():
             if t < wait:   # wait 3 seconds
                 hum_pose_msg.pose.position.x = initial_pose.position.x
                 reference_pose.position.x    = initial_pose.position.x
-            elif (t-wait) <= 1/cos_freq:
+            elif (t-wait) <= (0.5/cos_freq):
                 hum_pose_msg.pose.position.x = initial_pose.position.x + 0.5 * x5 * (1 - np.cos(omega * (t - wait)))
                 reference_pose.position.x    = initial_pose.position.x + 0.5 * x5 * (1 - np.cos(omega * (t - wait)))
+            elif (t - wait) <= (0.5 / cos_freq) + end_wait:
+                hum_pose_msg.pose.position.x = initial_pose.position.x + x5
+                reference_pose.position.x = initial_pose.position.x + x5
             else:
-                os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
-                run = input('Press enter to continue, else digit "stop" \n')
-                if run != "stop":
-                    t = 0
-                    if record == 'y' or record == 'Y':
+                if record == 'y' or record == 'Y':
+                    os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
+                    run = input('Press enter to continue, else digit "stop" \n')
+                    if run != "stop":
+                        t = 0
                         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         print("Acquisition of bag record, DON'T QUIT \n")
+                else:
+                    run = input('Press enter to continue, else digit "stop" \n')
+                    if run != "stop":
+                        t = 0
+                        print("Script is running... \n")
+
         elif case_x == 2:           # X as constant velocity
             if t < wait:
-                if ((vel_case_x_2 * t) // x5) % 2 == 0:  # even after floor
-                    hum_pose_msg.pose.position.x = initial_pose.position.x
-                    reference_pose.position.x    = initial_pose.position.x
-                else:
-                    hum_pose_msg.pose.position.x = initial_pose.position.x
-                    reference_pose.position.x    = initial_pose.position.x
-            elif (t-wait) <= (2 * x5) / vel_case_x_2:
-                if ((vel_case_x_2 * t) // x5) % 2 == 0:    # even after floor
-                    hum_pose_msg.pose.position.x = initial_pose.position.x + (vel_case_x_2 * (t - wait)) % x5
-                    reference_pose.position.x    = initial_pose.position.x + (vel_case_x_2 * (t - wait)) % x5
-                else:
-                    hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
-                    reference_pose.position.x    = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
+                hum_pose_msg.pose.position.x = initial_pose.position.x
+                reference_pose.position.x    = initial_pose.position.x
+                # if ((vel_case_x_2 * t) // x5) % 2 == 0:  # even after floor
+                #     hum_pose_msg.pose.position.x = initial_pose.position.x
+                #     reference_pose.position.x    = initial_pose.position.x
+                # else:
+                #     hum_pose_msg.pose.position.x = initial_pose.position.x
+                #     reference_pose.position.x    = initial_pose.position.x
+            elif (t-wait) <= (x5 / vel_case_x_2):
+                hum_pose_msg.pose.position.x = initial_pose.position.x + (vel_case_x_2 * (t - wait))
+                reference_pose.position.x    = initial_pose.position.x + (vel_case_x_2 * (t - wait))
+            elif (t-wait) <= (x5 / vel_case_x_2) + end_wait:
+                hum_pose_msg.pose.position.x = initial_pose.position.x + x5
+                reference_pose.position.x    = initial_pose.position.x + x5
+            #     if ((vel_case_x_2 * t) // x5) % 2 == 0:    # even after floor
+            #         hum_pose_msg.pose.position.x = initial_pose.position.x + (vel_case_x_2 * (t - wait)) % x5
+            #         reference_pose.position.x    = initial_pose.position.x + (vel_case_x_2 * (t - wait)) % x5
+            #     else:
+            #         hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
+            #         reference_pose.position.x    = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
             else:
-                os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
-                run = input('Press enter to continue, else digit "stop" \n')
-                if run != "stop":
-                    t = 0
-                    if record == 'y' or record == 'Y':
+                if record == 'y' or record == 'Y':
+                    os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
+                    run = input('Press enter to continue, else digit "stop" \n')
+                    if run != "stop":
+                        t = 0
                         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         print("Acquisition of bag record, DON'T QUIT \n")
+                else:
+                    run = input('Press enter to continue, else digit "stop" \n')
+                    if run != "stop":
+                        t = 0
+                        print("Script is running... \n")
 
         # human target Y:
         hum_pose_msg.pose.position.y = initial_pose.position.y
@@ -139,7 +182,7 @@ def traj_publisher():
 
         hum_pub.publish(hum_pose_msg)
         nom_pub.publish(nom_pose_msg)
-
+        # obst_pub.publish(x_coord_obst)
         ros_rate.sleep()
 
 

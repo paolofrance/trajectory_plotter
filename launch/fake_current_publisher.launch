@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find trajectory_plotter)/config/params.yaml" />
+  <node name="fake_cur_pub" pkg="trajectory_plotter" type="fake_current_pose_publisher.py" output="screen"/>
+</launch>
