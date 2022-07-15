@@ -25,8 +25,8 @@ def traj_publisher():
         t += 1.0/rate
         cur_pose_msg = PoseStamped()
 
-        cur_pose_msg.pose.position.x = -0.3
-        cur_pose_msg.pose.position.y = -0.7
+        cur_pose_msg.pose.position.x = -0.1
+        cur_pose_msg.pose.position.y = -0.1
         cur_pose_msg.pose.position.z = 0
 
         stamp = rospy.Time.now()

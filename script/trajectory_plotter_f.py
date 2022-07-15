@@ -113,7 +113,7 @@ if __name__ == '__main__':
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
-    delta_axis = [0.1, 0.1, 0.1, 0.2]  # all view
+    delta_axis = [0.05, 0.05, 0.05, 0.12]  # all view
 
     fig, Ax = plt.subplots(1)
 
@@ -128,6 +128,7 @@ if __name__ == '__main__':
         rospy.sleep(0.5)
 
     free_trajectory = True
+    h_line = True
     # obstacle = True
     # if not free_trajectory:
     obst_x, obst_y = my_plotter.x_0 + 0.275, my_plotter.y_0 + 0
@@ -141,7 +142,7 @@ if __name__ == '__main__':
         if my_plotter.show_obst:
             my_plotter.show_obst = False
             obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst,
-                               my_plotter.y_0 + my_plotter.y_obst), 0.02, color='r', label='obst')
+                               my_plotter.y_0 + my_plotter.y_obst), 0.04, color='r')
             my_plotter.ax.add_patch(obst)
 
         if my_plotter.show_nom:
@@ -167,12 +168,17 @@ if __name__ == '__main__':
         axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + end_point + delta_axis[1],
                 my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
         plt.axis(axis)
+        plt.subplots_adjust(left=0.04, bottom=0.07, right=0.98, top=0.88, wspace=0.06, hspace=0.06)
         my_plotter.ax.set_aspect('equal')
+        my_plotter.ax.set_axisbelow(True)
         plt.grid()
         plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
-                 np.full(100, my_plotter.y_0), '--r', linewidth=1.2, label='Nominal robot')
+                 np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
         if not free_trajectory:
             plt.plot(X_ht + my_plotter.x_0, Y_ht + my_plotter.y_0, '--b', linewidth=1.2, label='Human target')
+        if h_line:
+            plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
+                     np.full(100, my_plotter.y_0 + 0.08), '--b', linewidth=1, label='Stay below this')
         plt.title('TITLE:')
 
         rate.sleep()
