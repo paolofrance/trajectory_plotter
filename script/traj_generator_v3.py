@@ -48,6 +48,7 @@ def traj_publisher():
     cos_freq     = 0.05
     omega        = 2 * np.pi * cos_freq
     vel_case_x_2 = 0.05
+    vel_return = 0.1
 
     x0 = 0              # start
     x1 = 0.1            # begin deviation
@@ -117,13 +118,13 @@ def traj_publisher():
             elif (t - wait) <= (0.5 / cos_freq) + end_wait:
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5
                 reference_pose.position.x = initial_pose.position.x + x5
-            elif (t-wait) <= (0.5 / cos_freq) + (x5 / vel_case_x_2) + end_wait:
+            elif (t-wait) <= (0.5 / cos_freq) + (x5 / vel_return) + end_wait:
                 if rec == 'y' or rec == 'Y':
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - \
-                                               (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                                               (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
                 reference_pose.position.x = initial_pose.position.x + x5 - \
-                                            (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                                            (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
             else:
                 run = input('Press enter to continue, else digit "stop" \n')
                 if run != "stop":
@@ -158,11 +159,11 @@ def traj_publisher():
             #     else:
             #         hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
             #         reference_pose.position.x    = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
-            elif (t-wait) <= 2 * (x5 / vel_case_x_2) + end_wait:
+            elif (t-wait) <= (x5 / vel_case_x_2) + (x5 / vel_return) + end_wait:
                 if rec == 'y' or rec == 'Y':
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
-                hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
-                reference_pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                reference_pose.position.x = initial_pose.position.x + x5 - (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
             else:
                 run = input('Press enter to continue, else digit "stop" \n')
                 if run != "stop":

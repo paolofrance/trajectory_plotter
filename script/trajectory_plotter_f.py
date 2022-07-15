@@ -141,8 +141,10 @@ if __name__ == '__main__':
 
         if my_plotter.show_obst:
             my_plotter.show_obst = False
-            obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst,
-                               my_plotter.y_0 + my_plotter.y_obst), 0.04, color='r')
+            # obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst,
+            #                    my_plotter.y_0 + my_plotter.y_obst), 0.04, color='r')
+            obst = plt.Rectangle((my_plotter.x_0 + my_plotter.x_obst/2,
+                                  my_plotter.y_0 + my_plotter.y_obst), 0.06, 0.04, color='r')
             my_plotter.ax.add_patch(obst)
 
         if my_plotter.show_nom:
