@@ -57,7 +57,7 @@ def traj_publisher():
     x5 = 0.5            # end
 
     # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
-    wait = 2
+    wait = 1
     end_wait = 1
 
     rospy.sleep(1)
@@ -75,6 +75,7 @@ def traj_publisher():
 
     # Run a bash file containing 'rosbag record -a'
     record = input("Do you want to record? y/n \n")
+    rec = record
     if record == 'y' or record == 'Y':
         PATH = rospkg.RosPack().get_path('trajectory_plotter')
         run = "0"
@@ -116,19 +117,23 @@ def traj_publisher():
             elif (t - wait) <= (0.5 / cos_freq) + end_wait:
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5
                 reference_pose.position.x = initial_pose.position.x + x5
-            else:
-                if record == 'y' or record == 'Y':
+            elif (t-wait) <= (0.5 / cos_freq) + (x5 / vel_case_x_2) + end_wait:
+                if rec == 'y' or rec == 'Y':
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
-                    run = input('Press enter to continue, else digit "stop" \n')
-                    if run != "stop":
-                        t = 0
+                hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - \
+                                               (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                reference_pose.position.x = initial_pose.position.x + x5 - \
+                                            (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+            else:
+                run = input('Press enter to continue, else digit "stop" \n')
+                if run != "stop":
+                    t = 0
+                    rec = record
+                    if rec:
                         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         print("Acquisition of bag record, DON'T QUIT \n")
-                else:
-                    run = input('Press enter to continue, else digit "stop" \n')
-                    if run != "stop":
-                        t = 0
+                    else:
                         print("Script is running... \n")
 
         elif case_x == 2:           # X as constant velocity
@@ -153,19 +158,21 @@ def traj_publisher():
             #     else:
             #         hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
             #         reference_pose.position.x    = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
-            else:
-                if record == 'y' or record == 'Y':
+            elif (t-wait) <= 2 * (x5 / vel_case_x_2) + end_wait:
+                if rec == 'y' or rec == 'Y':
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
-                    run = input('Press enter to continue, else digit "stop" \n')
-                    if run != "stop":
-                        t = 0
+                hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+                reference_pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait - (x5 / vel_case_x_2) - end_wait))
+            else:
+                run = input('Press enter to continue, else digit "stop" \n')
+                if run != "stop":
+                    t = 0
+                    rec = record
+                    if rec:
                         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                         print("Acquisition of bag record, DON'T QUIT \n")
-                else:
-                    run = input('Press enter to continue, else digit "stop" \n')
-                    if run != "stop":
-                        t = 0
+                    else:
                         print("Script is running... \n")
 
         # human target Y:
