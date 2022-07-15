@@ -1,3 +1,4 @@
 nominal_traj_topic: /target_cart_pose
 current_traj_topic: /current_pose
 human_traj_topic : /human_target
+obst_x_coord_topic : /obst_x_coord

@@ -15,7 +15,7 @@ class Plotter:
         self.show_nom = False
         self.show_cur = False
         self.show_hum = False
-        # self.show_obst = False
+        self.show_obst = False
 
         self.x_nom = np.array([])
         self.y_nom = np.array([])
@@ -34,7 +34,8 @@ class Plotter:
         self.y_hum = np.array([])
         self.z_hum = np.array([])
 
-        # self.x_obst = 0
+        self.x_obst = np.array([])
+        self.y_obst = np.array([])
 
         self.x_0 = 0
         self.y_0 = 0
@@ -74,9 +75,10 @@ class Plotter:
         self.z_hum = data.pose.position.z
         self.show_hum = True
 
-    # def obst_callback(self, data):
-    #     self.x_obst = data.float32
-    #     self.show_obst = True
+    def obst_callback(self, data):
+        self.x_obst = data.pose.position.x
+        self.y_obst = data.pose.position.y
+        self.show_obst = True
 
     def add_circle(self, x, y):
         self.circle1 = plt.Circle((x, y), 0.03, color='r')
@@ -108,7 +110,7 @@ if __name__ == '__main__':
     nominal_traj_topic = rospy.get_param('nominal_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
     human_traj_topic   = rospy.get_param('human_traj_topic')
-    # obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
+    obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
     delta_axis = [0.1, 0.1, 0.1, 0.2]  # all view
@@ -120,13 +122,13 @@ if __name__ == '__main__':
     nominal_sub = rospy.Subscriber(nominal_traj_topic, PoseStamped, my_plotter.nominal_callback)
     current_sub = rospy.Subscriber(current_traj_topic, PoseStamped, my_plotter.current_callback)
     human_sub   = rospy.Subscriber(human_traj_topic  , PoseStamped, my_plotter.human_callback)
-    # obst_sub    = rospy.Subscriber(obst_x_coord_topic, Float32    , my_plotter.obst_callback)
+    obst_sub    = rospy.Subscriber(obst_x_coord_topic, PoseStamped, my_plotter.obst_callback)
     # OBSTACLE
     while my_plotter.pose_zeroing:
         rospy.sleep(0.5)
 
     free_trajectory = True
-    obstacle = True
+    # obstacle = True
     # if not free_trajectory:
     obst_x, obst_y = my_plotter.x_0 + 0.275, my_plotter.y_0 + 0
 
@@ -136,15 +138,16 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
 
-        # if my_plotter.show_obst:
-        #     my_plotter.show_obst = False
-        #     obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst, my_plotter.y_0 + 0), 0.02, color='r', label='obst')
-        #     my_plotter.ax.add_patch(obst)
+        if my_plotter.show_obst:
+            my_plotter.show_obst = False
+            obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst,
+                               my_plotter.y_0 + my_plotter.y_obst), 0.02, color='r', label='obst')
+            my_plotter.ax.add_patch(obst)
 
         if my_plotter.show_nom:
-            if obstacle:
-                obst = plt.Circle((obst_x, obst_y), 0.02, color='r')
-                my_plotter.ax.add_patch(obst)
+            # if obstacle:
+            #     obst = plt.Circle((obst_x, obst_y), 0.02, color='r')
+            #     my_plotter.ax.add_patch(obst)
             my_plotter.show_nom = False
             my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
 

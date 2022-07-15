@@ -29,16 +29,17 @@ def traj_publisher():
     nominal_traj_topic = rospy.get_param('nominal_traj_topic')
     human_traj_topic   = rospy.get_param('human_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
-    # obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
+    obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
     current_sub        = rospy.Subscriber(current_traj_topic  , PoseStamped, cpm.current_callback)
 
     print('\n PUBLISHED TOPICS:')
     print(nominal_traj_topic)
     print(human_traj_topic)
+    print(obst_x_coord_topic)
 
     nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size = 10)
     hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size = 10)
-    # obst_pub = rospy.Publisher(obst_x_coord_topic, Float32, queue_size=10)
+    obst_pub = rospy.Publisher(obst_x_coord_topic, PoseStamped, queue_size=10)
     rate     = 125.0
     ros_rate = rospy.Rate(rate)
     t        = 0.0
@@ -84,17 +85,18 @@ def traj_publisher():
         run = '0'
         print("Script is running - NO ACQUISITION \n")
 
-    # rnd_obs = input("Do you want rand obstacle? y/n \n")
-    # if rnd_obs == 'y' or rnd_obs == 'Y':
-    #     rand_obst = True
-    # else:
-    #     rand_obst = False
+    rnd_obs = input("Do you want rand obstacle? y/n \n")
+    if rnd_obs == 'y' or rnd_obs == 'Y':
+        rand_obst = True
+    else:
+        rand_obst = False
 
+    obst_pose_msg = PoseStamped()
+    obst_pose_msg.pose.position.x = 0.275
 
     while run != "stop" and (not rospy.is_shutdown()):
-        # x_coord_obst = Float32()
-        # if t == 0 and rand_obst == True:
-        #     x_coord_obst = np.random.randint(100, 400, 1) / 1000
+        if t == 0 and rand_obst == True:
+            obst_pose_msg.pose.position.x = np.random.randint(100, 400, 1) / 1000
         #     tmp = x_coord_obst
         # else:
         #     x_coord_obst = tmp
@@ -174,15 +176,19 @@ def traj_publisher():
         reference_pose.position.z    = initial_pose.position.z
         hum_pose_msg.pose.position.z = initial_pose.position.z
 
+        # Obstacle y coordinate
+        obst_pose_msg.pose.position.y = 0
+
         stamp = rospy.Time.now()
         hum_pose_msg.header.stamp = stamp
+        obst_pose_msg.header.stamp = stamp
         nom_pose_msg              = PoseStamped()
         nom_pose_msg.pose         = reference_pose
         nom_pose_msg.header.stamp = stamp
 
         hum_pub.publish(hum_pose_msg)
         nom_pub.publish(nom_pose_msg)
-        # obst_pub.publish(x_coord_obst)
+        obst_pub.publish(obst_pose_msg)
         ros_rate.sleep()
 
 
