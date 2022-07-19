@@ -152,15 +152,15 @@ if __name__ == '__main__':
             #     obst = plt.Circle((obst_x, obst_y), 0.02, color='r')
             #     my_plotter.ax.add_patch(obst)
             my_plotter.show_nom = False
-            my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
+            my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or') #, label='Robot Target')
 
         if my_plotter.show_cur:
             my_plotter.show_cur = False
-            my_plotter.ax.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Current Pose')
+            my_plotter.ax.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Your current position')
 
         if my_plotter.show_hum:
             my_plotter.show_hum = False
-            my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
+            my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Target') # label='Human Target')
 
         plt.draw()
         plt.legend()
@@ -180,7 +180,7 @@ if __name__ == '__main__':
             plt.plot(X_ht + my_plotter.x_0, Y_ht + my_plotter.y_0, '--b', linewidth=1.2, label='Human target')
         if h_line:
             plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
-                     np.full(100, my_plotter.y_0 + 0.08), '--b', linewidth=1, label='Stay below this')
-        plt.title('TITLE:')
+                     np.full(100, my_plotter.y_0 + 0.08), '--b', linewidth=1, label='Please stay below this line')
+        plt.title('PLEASE AVOID THE RED OBSTACLE:')
 
         rate.sleep()

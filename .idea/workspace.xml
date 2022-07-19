@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6d7a5c6e-d48f-4964-9c44-9a30a39191cd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/launch/traj_plotter.launch" beforeDir="false" afterPath="$PROJECT_DIR$/launch/traj_plotter.launch" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +36,13 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/marie/gt_ws/src/trajectory_plotter&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;module&quot;,
+      &quot;repository&quot;
+    ]
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -48,6 +54,60 @@
       <option name="presentableId" value="Default" />
       <updated>1656324501500</updated>
     </task>
+    <task id="LOCAL-00001" summary="Fabio: --">
+      <created>1657812203495</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1657812203495</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fabio: add random obstacle position">
+      <created>1657876866453</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1657876866453</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fabio: minor fixes">
+      <created>1657888928619</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1657888928619</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fabio: minor fixes">
+      <created>1657891404680</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1657891404680</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fabio: circle or rectangle obstacle">
+      <created>1657898434695</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1657898434695</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fabio: --" />
+    <MESSAGE value="Fabio: add random obstacle position" />
+    <MESSAGE value="Fabio: minor fixes" />
+    <MESSAGE value="Fabio: circle or rectangle obstacle" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fabio: circle or rectangle obstacle" />
   </component>
 </project>

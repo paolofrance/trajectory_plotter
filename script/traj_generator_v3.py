@@ -76,16 +76,19 @@ def traj_publisher():
 
     # Run a bash file containing 'rosbag record -a'
     record = input("Do you want to record? y/n \n")
-    rec = record
+
     if record == 'y' or record == 'Y':
+        record = True
         PATH = rospkg.RosPack().get_path('trajectory_plotter')
         run = "0"
         record_process = subprocess.Popen(PATH + "/script/bag_record.sh", start_new_session=True,
                                           stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         print("Acquisition of bag record, DON'T QUIT \n")
     else:
+        record = False
         run = '0'
         print("Script is running - NO ACQUISITION \n")
+    rec = record
 
     rnd_obs = input("Do you want rand obstacle? y/n \n")
     if rnd_obs == 'y' or rnd_obs == 'Y':
@@ -119,7 +122,7 @@ def traj_publisher():
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5
                 reference_pose.position.x = initial_pose.position.x + x5
             elif (t-wait) <= (0.5 / cos_freq) + (x5 / vel_return) + end_wait:
-                if rec == 'y' or rec == 'Y':
+                if rec:
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - \
                                                (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
@@ -160,7 +163,7 @@ def traj_publisher():
             #         hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
             #         reference_pose.position.x    = initial_pose.position.x + x5 - (vel_case_x_2 * (t - wait)) % x5
             elif (t-wait) <= (x5 / vel_case_x_2) + (x5 / vel_return) + end_wait:
-                if rec == 'y' or rec == 'Y':
+                if rec:
                     os.killpg(os.getpgid(record_process.pid), signal.SIGTERM)
                 hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
                 reference_pose.position.x = initial_pose.position.x + x5 - (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
