@@ -128,7 +128,7 @@ if __name__ == '__main__':
         rospy.sleep(0.5)
 
     free_trajectory = True
-    h_line = True
+    h_line = False
     # obstacle = True
     # if not free_trajectory:
     obst_x, obst_y = my_plotter.x_0 + 0.275, my_plotter.y_0 + 0

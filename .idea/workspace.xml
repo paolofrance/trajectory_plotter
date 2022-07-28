@@ -89,7 +89,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657898434695</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fabio: minor fixes">
+      <created>1658239233459</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1658239233459</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -106,8 +113,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fabio: --" />
     <MESSAGE value="Fabio: add random obstacle position" />
-    <MESSAGE value="Fabio: minor fixes" />
     <MESSAGE value="Fabio: circle or rectangle obstacle" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fabio: circle or rectangle obstacle" />
+    <MESSAGE value="Fabio: minor fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fabio: minor fixes" />
   </component>
 </project>
