@@ -37,8 +37,8 @@ def traj_publisher():
     print(human_traj_topic)
     print(obst_x_coord_topic)
 
-    nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size = 10)
-    hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size = 10)
+    nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size=10)
+    hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size=10)
     obst_pub = rospy.Publisher(obst_x_coord_topic, PoseStamped, queue_size=10)
     rate     = 125.0
     ros_rate = rospy.Rate(rate)

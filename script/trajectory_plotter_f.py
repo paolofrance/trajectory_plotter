@@ -109,7 +109,7 @@ if __name__ == '__main__':
     rospy.init_node('plotter', anonymous=True)
     nominal_traj_topic = rospy.get_param('nominal_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
-    human_traj_topic   = rospy.get_param('human_traj_topic')
+    human_target_topic = rospy.get_param('human_target_topic')
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     my_plotter = Plotter(Ax)
     nominal_sub = rospy.Subscriber(nominal_traj_topic, PoseStamped, my_plotter.nominal_callback)
     current_sub = rospy.Subscriber(current_traj_topic, PoseStamped, my_plotter.current_callback)
-    human_sub   = rospy.Subscriber(human_traj_topic  , PoseStamped, my_plotter.human_callback)
+    human_sub   = rospy.Subscriber(human_target_topic, PoseStamped, my_plotter.human_callback)
     obst_sub    = rospy.Subscriber(obst_x_coord_topic, PoseStamped, my_plotter.obst_callback)
     # OBSTACLE
     while my_plotter.pose_zeroing:
@@ -152,7 +152,7 @@ if __name__ == '__main__':
             #     obst = plt.Circle((obst_x, obst_y), 0.02, color='r')
             #     my_plotter.ax.add_patch(obst)
             my_plotter.show_nom = False
-            my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or') #, label='Robot Target')
+            my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
 
         if my_plotter.show_cur:
             my_plotter.show_cur = False
@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
         if my_plotter.show_hum:
             my_plotter.show_hum = False
-            my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Target') # label='Human Target')
+            my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
 
         plt.draw()
         plt.legend()
