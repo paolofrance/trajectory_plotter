@@ -2,6 +2,7 @@
 # license removed for brevity
 import copy
 import numpy as np
+import random
 import rospy
 from geometry_msgs.msg import PoseStamped, Pose
 # from std_msgs.msg import Float32
@@ -58,7 +59,7 @@ def traj_publisher():
     x5 = 0.5            # end
 
     # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
-    wait = 1
+    wait = random.randint(2, 5)
     end_wait = 1
     #final_wait = 5
 
