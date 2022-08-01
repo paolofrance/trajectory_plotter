@@ -60,6 +60,7 @@ def traj_publisher():
     # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
     wait = 1
     end_wait = 1
+    #final_wait = 5
 
     rospy.sleep(1)
 
@@ -127,7 +128,10 @@ def traj_publisher():
                 #hum_pose_msg.pose.position.x = initial_pose.position.x + x5 - (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
                 reference_pose.position.x = initial_pose.position.x + x5 - \
                                             (vel_return * (t - wait - (x5 / vel_case_x_2) - end_wait))
+            # elif (t-wait) <= (0.5 / cos_freq) + (x5 / vel_return) + end_wait + final_wait:
+              #  reference_pose.position.x    = initial_pose.position.x
             else:
+                reference_pose.position.x    = initial_pose.position.x
                 run = input('Press enter to continue, else digit "stop" \n')
                 if run != "stop":
                     t = 0
