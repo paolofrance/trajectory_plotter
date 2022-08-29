@@ -22,11 +22,12 @@ def traj_publisher():
     rospy.sleep(5)
 
     while not rospy.is_shutdown():
+        # print("rospy is not shutdown")
         t += 1.0/rate
         cur_pose_msg = PoseStamped()
 
-        cur_pose_msg.pose.position.x = -0.1
-        cur_pose_msg.pose.position.y = -0.1
+        cur_pose_msg.pose.position.x = 0
+        cur_pose_msg.pose.position.y = 0.1
         cur_pose_msg.pose.position.z = 0
 
         stamp = rospy.Time.now()

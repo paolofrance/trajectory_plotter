@@ -113,7 +113,7 @@ if __name__ == '__main__':
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
-    delta_axis = [0.05, 0.05, 0.05, 0.12]  # all view
+    delta_axis = [0.05, 0.05, 0.25, 0.4]  # all view
 
     fig, Ax = plt.subplots(1)
 
@@ -143,7 +143,7 @@ if __name__ == '__main__':
             my_plotter.show_obst = False
             # obst = plt.Circle((my_plotter.x_0 + my_plotter.x_obst,
             #                    my_plotter.y_0 + my_plotter.y_obst), 0.04, color='r')
-            obst = plt.Rectangle((my_plotter.x_0 + my_plotter.x_obst/2,
+            obst = plt.Rectangle((my_plotter.x_0 + my_plotter.x_obst,
                                   my_plotter.y_0 + my_plotter.y_obst), 0.06, 0.04, color='r')
             my_plotter.ax.add_patch(obst)
 
@@ -162,6 +162,18 @@ if __name__ == '__main__':
             my_plotter.show_hum = False
             my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
 
+        # wait the param from traj_generator_v3.py
+        wait_param = rospy.set_param("wait_param", True)
+        while wait_param == True:
+            print("waiting param")
+            rospy.sleep(2)
+        case_traj = rospy.get_param("case_traj")
+        
+        
+        #case_traj = "2"
+        amp_traj2 = 0.2
+        amp_traj3 = 0.15
+
         plt.draw()
         plt.legend()
         plt.pause(0.001)
@@ -169,13 +181,44 @@ if __name__ == '__main__':
         my_plotter.ax.clear()
         axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + end_point + delta_axis[1],
                 my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
+        #axis = [-0.15, 0.60, -0.3, 0.3]
+        #axis = [-0.1, 1.5, -1, 1]
         plt.axis(axis)
         plt.subplots_adjust(left=0.04, bottom=0.07, right=0.98, top=0.88, wspace=0.06, hspace=0.06)
         my_plotter.ax.set_aspect('equal')
         my_plotter.ax.set_axisbelow(True)
         plt.grid()
-        plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
-                 np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
+
+        if case_traj == "1":
+            plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
+                    np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
+        elif case_traj == "2":
+            x = np.linspace(0, end_point, 100)
+            y = np.full(100, my_plotter.y_0) + amp_traj2 * np.sin((x) * np.pi/end_point)
+            plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100), y, '--r', linewidth=1.2)
+                #np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
+        elif case_traj == "3":
+            R = 0.05
+            p1 = 0.4
+            x1 = np.linspace(0, end_point*0.5, 50)
+            x2 = np.full(25, end_point*0.5)
+            x3 = np.linspace(end_point*0.5,end_point, 50)
+            
+            y1 = np.full(41, my_plotter.y_0) - amp_traj3 * np.sin((x1[:41]) * np.pi/(end_point * p1 *2))
+            y11 = np.full(9, my_plotter.y_0 + R - amp_traj3) - np.sqrt(np.full(9,R**2) - np.square(x1[41:] - np.full(9,p1 * end_point)))
+            y2 = np.linspace(my_plotter.y_0 - amp_traj3 + R, my_plotter.y_0 + amp_traj3 - R, 25)
+            y33 = np.full(9, my_plotter.y_0 - R + amp_traj3) + np.sqrt(np.full(9,R**2) - np.square(x3[:9] - np.full(9,0.5*end_point + R)))
+            y3 = np.full(41, my_plotter.y_0 + amp_traj3) - amp_traj3 * (1 - np.sin((x3[9:] - 0.5*end_point*p1) * np.pi/(end_point * p1 *2)))
+            y = np.concatenate((y1, y11, y2, y33, y3), axis=0)
+            x1 = np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point*0.5, 50)
+            x2 = np.full(25, my_plotter.x_0 + end_point*0.5)
+            x3 = np.linspace(my_plotter.x_0 + end_point*0.5, my_plotter.x_0 + end_point, 50)
+            x = np.concatenate((x1, x2, x3), axis=0)
+
+
+            plt.plot(x, y, '--r', linewidth=1.2)   # label='Nominal robot')
+
+
         if not free_trajectory:
             plt.plot(X_ht + my_plotter.x_0, Y_ht + my_plotter.y_0, '--b', linewidth=1.2, label='Human target')
         if h_line:
