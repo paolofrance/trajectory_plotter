@@ -171,7 +171,7 @@ if __name__ == '__main__':
         
         
         #case_traj = "2"
-        amp_traj2 = 0.2
+        amp_traj2 = 0.15
         amp_traj3 = 0.15
 
         plt.draw()

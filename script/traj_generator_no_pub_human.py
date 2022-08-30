@@ -28,14 +28,14 @@ def traj_publisher():
     rospy.sleep(.1)
 
     nominal_traj_topic = rospy.get_param('nominal_traj_topic')
-    human_traj_topic   = rospy.get_param('human_traj_topic')
+    #human_traj_topic   = rospy.get_param('human_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
     current_sub        = rospy.Subscriber(current_traj_topic  , PoseStamped, cpm.current_callback)
 
     print('\n PUBLISHED TOPICS:')
     print(nominal_traj_topic)
-    print(human_traj_topic)
+    #print(human_traj_topic)
     print(obst_x_coord_topic)
 
     nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size=10)

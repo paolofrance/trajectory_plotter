@@ -56,9 +56,9 @@ def traj_publisher():
     # ang vel of coord X
     cos_freq     = 0.05
     omega        = 2 * np.pi * cos_freq
-    vel_return   = 0.1
+    vel_return   = 0.2
     # param for sine shape
-    amp_traj2 = 0.2
+    amp_traj2 = 0.15
     #rospy.set_param("amp_traj2", amp_traj2)
     # param for S-shape
     cos_freq3 = 0.09
