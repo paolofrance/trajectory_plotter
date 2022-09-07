@@ -86,11 +86,15 @@ def traj_publisher():
 
     # TRAJECTORY CASES:
     case_traj = input("Choose the trajectory case? (1: linear - 2: sine - 3: S shape) \n")
-    rospy.set_param("case_traj", case_traj)
-    rospy.set_param("wait_param", False)
+    #rospy.set_param("case_traj", case_traj)
+    #rospy.set_param("wait_param", False)
     # 1: nom traj line
     # 2: nom traj sine
     # 3: nom traj "S-shape"   "-sin" -> "vertical line" -> "sin"
+
+    # HEIGHT OF NOM.TRAJ FROM STARTING POINT
+    delta_z = input("Insert height of nom. traj from starting point [cm] ( \n")
+    delta_z = int(delta_z)
 
     # Run a bash file containing 'rosbag record -a'
     record = input("Do you want to record? y/n \n")
@@ -211,8 +215,8 @@ def traj_publisher():
                 hum_pose_msg.pose.position.y = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
                 reference_pose.position.y    = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
             else:
-                hum_pose_msg.pose.position.y = initial_pose.position.y
-                reference_pose.position.y    = initial_pose.position.y
+                hum_pose_msg.pose.position.y = initial_pose.position.y + delta_z/100
+                reference_pose.position.y    = initial_pose.position.y + delta_z/100
 
         elif case_traj == "3":        # X as cosine -> vert (x=const) -> X as cosine
             if t < wait:   # wait 3 seconds
@@ -275,8 +279,8 @@ def traj_publisher():
 
 
         # REFERENCE POSITION Z
-        reference_pose.position.z    = initial_pose.position.z
-        hum_pose_msg.pose.position.z = initial_pose.position.z
+        reference_pose.position.z    = initial_pose.position.z + delta_z/100
+        hum_pose_msg.pose.position.z = initial_pose.position.z + delta_z/200
 
         
 

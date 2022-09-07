@@ -9,9 +9,10 @@ from geometry_msgs.msg import PoseStamped
 
 class Plotter:
 
-    def __init__(self, ax):
+    def __init__(self, ax1, ax2):
 
-        self.ax = ax
+        self.ax1 = ax1
+        self.ax2 = ax2
         self.show_nom = False
         self.show_cur = False
         self.show_hum = False
@@ -113,12 +114,15 @@ if __name__ == '__main__':
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
-    delta_axis = [0.05, 0.05, 0.25, 0.4]  # all view
+    delta_axis = [0.05, 0.05, 0.20, 0.2, 0.05, 0.4]  # all view
 
-    fig, Ax = plt.subplots(1)
+    # wait the param from traj_generator_v3.py
+    case_traj2 = input("Insert the traj case (1: linear - 2: sine - 3: S shape) \n")
+
+    fig, (Z_ax, Ax) = plt.subplots(1, 2, gridspec_kw={'width_ratios': [1, 8]})
 
     plt.ion()
-    my_plotter = Plotter(Ax)
+    my_plotter = Plotter(Ax, Z_ax)
     nominal_sub = rospy.Subscriber(nominal_traj_topic, PoseStamped, my_plotter.nominal_callback)
     current_sub = rospy.Subscriber(current_traj_topic, PoseStamped, my_plotter.current_callback)
     human_sub   = rospy.Subscriber(human_target_topic, PoseStamped, my_plotter.human_callback)
@@ -145,31 +149,26 @@ if __name__ == '__main__':
             #                    my_plotter.y_0 + my_plotter.y_obst), 0.04, color='r')
             obst = plt.Rectangle((my_plotter.x_0 + my_plotter.x_obst,
                                   my_plotter.y_0 + my_plotter.y_obst), 0.06, 0.04, color='r')
-            my_plotter.ax.add_patch(obst)
+            my_plotter.ax1.add_patch(obst)
 
         if my_plotter.show_nom:
             # if obstacle:
             #     obst = plt.Circle((obst_x, obst_y), 0.02, color='r')
             #     my_plotter.ax.add_patch(obst)
             my_plotter.show_nom = False
-            my_plotter.ax.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
+            my_plotter.ax1.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
+            my_plotter.ax2.plot(1, my_plotter.z_nom, 'or', label='Nominal Z')
 
         if my_plotter.show_cur:
             my_plotter.show_cur = False
-            my_plotter.ax.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Your current position')
+            my_plotter.ax1.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Your current position')
+            my_plotter.ax2.plot(1, my_plotter.z_cur, 'Xg', label='Current Z')
 
         if my_plotter.show_hum:
             my_plotter.show_hum = False
-            my_plotter.ax.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
+            my_plotter.ax1.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
+            my_plotter.ax2.plot(1, my_plotter.z_hum, 'ob', label='Human Target Z')
 
-        # wait the param from traj_generator_v3.py
-        wait_param = rospy.set_param("wait_param", True)
-        while wait_param == True:
-            print("waiting param")
-            rospy.sleep(2)
-        case_traj = rospy.get_param("case_traj")
-        
-        
         #case_traj = "2"
         amp_traj2 = 0.15
         amp_traj3 = 0.15
@@ -178,26 +177,34 @@ if __name__ == '__main__':
         plt.legend()
         plt.pause(0.001)
 
-        my_plotter.ax.clear()
+        my_plotter.ax1.clear()
+        my_plotter.ax2.clear()
+
         axis = [my_plotter.x_0 - delta_axis[0], my_plotter.x_0 + end_point + delta_axis[1],
-                my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3]]
+                my_plotter.y_0 - delta_axis[2], my_plotter.y_0 + delta_axis[3],
+                my_plotter.z_0 - delta_axis[4], my_plotter.z_0 + delta_axis[5]]
         #axis = [-0.15, 0.60, -0.3, 0.3]
         #axis = [-0.1, 1.5, -1, 1]
-        plt.axis(axis)
-        plt.subplots_adjust(left=0.04, bottom=0.07, right=0.98, top=0.88, wspace=0.06, hspace=0.06)
-        my_plotter.ax.set_aspect('equal')
-        my_plotter.ax.set_axisbelow(True)
-        plt.grid()
-
-        if case_traj == "1":
+        my_plotter.ax1.set_xlim(axis[0:2])
+        my_plotter.ax1.set_ylim(axis[2:4])
+        my_plotter.ax2.set_xlim([0, 2])
+        #my_plotter.ax2.set_xlim(axis[2:4])
+        #plt.axis(axis)
+        #plt.subplots_adjust(left=0.04, bottom=0.07, right=0.98, top=0.88, wspace=0.06, hspace=0.06)
+        my_plotter.ax1.set_aspect('equal')
+        my_plotter.ax1.set_axisbelow(True)
+        my_plotter.ax1.grid(True)
+        my_plotter.ax2.grid(True)
+        
+        if case_traj2 == "1":
             plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
                     np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
-        elif case_traj == "2":
+        elif case_traj2 == "2":
             x = np.linspace(0, end_point, 100)
             y = np.full(100, my_plotter.y_0) + amp_traj2 * np.sin((x) * np.pi/end_point)
             plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100), y, '--r', linewidth=1.2)
                 #np.full(100, my_plotter.y_0), '--r', linewidth=1.2)   # label='Nominal robot')
-        elif case_traj == "3":
+        elif case_traj2 == "3":
             R = 0.05
             p1 = 0.4
             x1 = np.linspace(0, end_point*0.5, 50)

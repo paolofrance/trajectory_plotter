@@ -46,7 +46,7 @@ def traj_publisher():
     t        = 0.0
 
 
-    rospy.sleep(2)
+    rospy.sleep(8)
     reference_pose = copy.deepcopy(cpm.current_pose)
     initial_pose   = copy.deepcopy(cpm.current_pose)
     print('\n INITIAL POSE: ')
@@ -86,8 +86,11 @@ def traj_publisher():
 
     # TRAJECTORY CASES:
     case_traj = input("Choose the trajectory case? (1: linear - 2: sine - 3: S shape) \n")
-    rospy.set_param("case_traj", case_traj)
-    rospy.set_param("wait_param", False)
+
+    # HEIGHT OF NOM.TRAJ FROM STARTING POINT
+    delta_z = input("Insert height of nom. traj from starting point [cm] ( \n")
+    
+    #rospy.set_param("wait_param", False)
     # 1: nom traj line
     # 2: nom traj sine
     # 3: nom traj "S-shape"   "-sin" -> "vertical line" -> "sin"
@@ -208,7 +211,7 @@ def traj_publisher():
             # HUMAN AND ROBOT REFERNCE Y:
             if (t - wait) <= (0.5 / cos_freq) + end_wait:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
-                reference_pose.position.y    = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
+                reference_pose.position.y    = initial_pose.position.y + amp_traj2 * np.sin((reference_pose.position.x - initial_pose.position.x) * np.pi/x5)
             else:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y
                 reference_pose.position.y    = initial_pose.position.y
@@ -250,7 +253,7 @@ def traj_publisher():
             # HUMAN AND ROBOT REFERNCE Y:
             if (t-wait) <= np.arccos(1 - 4 * p1) / omega3:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y - amp_traj3 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/(x5 * p1 *2))
-                reference_pose.position.y    = initial_pose.position.y - amp_traj3 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/(x5 * p1 *2))
+                reference_pose.position.y    = initial_pose.position.y - amp_traj3 * np.sin((reference_pose.position.x - initial_pose.position.x) * np.pi/(x5 * p1 *2))
             elif (t-wait) <= np.arccos(1 - 4 * 0.5) / omega3:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y + R - amp_traj3 - np.sqrt(R**2 - (reference_pose.position.x - initial_pose.position.x - p1 * x5)**2)
                 reference_pose.position.y    = initial_pose.position.y + R - amp_traj3 - np.sqrt(R**2 - (reference_pose.position.x - initial_pose.position.x - p1 * x5)**2)
@@ -263,14 +266,14 @@ def traj_publisher():
                 reference_pose.position.y = initial_pose.position.y - R + amp_traj3 + np.sqrt(R**2 - (reference_pose.position.x - initial_pose.position.x - 0.5*x5 - R)**2)
             elif (t-wait) <= np.arccos(1 - 4 * 0.5) / omega3 + t_vert + np.arccos(1 - 4 * 0.5) / omega3:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y + amp_traj3 - amp_traj3 * (1 - np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x - 0.5*x5*p1) * np.pi/(x5 * p1 *2)))
-                reference_pose.position.y    = initial_pose.position.y + amp_traj3 - amp_traj3 * (1 - np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x - 0.5*x5*p1) * np.pi/(x5 * p1 *2)))
+                reference_pose.position.y    = initial_pose.position.y + amp_traj3 - amp_traj3 * (1 - np.sin((reference_pose.position.x - initial_pose.position.x - 0.5*x5*p1) * np.pi/(x5 * p1 *2)))
             else:
                 #hum_pose_msg.pose.position.y = initial_pose.position.y
                 reference_pose.position.y = initial_pose.position.y
 
 
         # REFERENCE POSITION Z
-        reference_pose.position.z    = initial_pose.position.z
+        reference_pose.position.z    = initial_pose.position.z + delta_z/100
         #hum_pose_msg.pose.position.z = initial_pose.position.z
 
         
