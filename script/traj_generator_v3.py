@@ -78,10 +78,10 @@ def traj_publisher():
 
     # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
     if rand_pause == 'y' or rand_pause == 'Y':
-        wait = random.randint(2, 5)
+        wait = random.randint(3, 6)
     else:
         wait = 2
-    end_wait = 1
+    end_wait = 5
     #final_wait = 5
 
     # TRAJECTORY CASES:
@@ -180,6 +180,20 @@ def traj_publisher():
             # REFERENCE POSITION Y
             reference_pose.position.y    = initial_pose.position.y
 
+            # REFERENCE POSITION Z
+            if t < wait:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z
+            elif (t-wait) <= 2:
+                reference_pose.position.z    = initial_pose.position.z + (delta_z/200)*(t-wait)
+                hum_pose_msg.pose.position.z = initial_pose.position.z + (delta_z/200)*(t-wait)
+            elif (t-wait) <= (0.5 / cos_freq) + end_wait + (x5 / vel_return)*0.4:
+                reference_pose.position.z    = initial_pose.position.z + delta_z/100
+                hum_pose_msg.pose.position.z = initial_pose.position.z + delta_z/100
+            else:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z
+
         elif case_traj == "2":
             # HUMAN AND ROBOT REFERNCE X:
             if t < wait:   # wait 3 seconds
@@ -215,8 +229,22 @@ def traj_publisher():
                 hum_pose_msg.pose.position.y = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
                 reference_pose.position.y    = initial_pose.position.y + amp_traj2 * np.sin((hum_pose_msg.pose.position.x - initial_pose.position.x) * np.pi/x5)
             else:
-                hum_pose_msg.pose.position.y = initial_pose.position.y + delta_z/100
-                reference_pose.position.y    = initial_pose.position.y + delta_z/100
+                hum_pose_msg.pose.position.y = initial_pose.position.y
+                reference_pose.position.y    = initial_pose.position.y
+
+            # REFERENCE POSITION Z
+            if t < wait:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z
+            elif (t-wait) <= 1:
+                reference_pose.position.z    = initial_pose.position.z + (delta_z/100)*(t-wait)
+                hum_pose_msg.pose.position.z = initial_pose.position.z + (delta_z/100)*(t-wait)
+            elif (t - wait) <= (0.5 / cos_freq) + end_wait + (x5 / vel_return)*0.4:
+                reference_pose.position.z    = initial_pose.position.z + delta_z/100
+                hum_pose_msg.pose.position.z = initial_pose.position.z + delta_z/100
+            else:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z                
 
         elif case_traj == "3":        # X as cosine -> vert (x=const) -> X as cosine
             if t < wait:   # wait 3 seconds
@@ -277,10 +305,21 @@ def traj_publisher():
                 hum_pose_msg.pose.position.y = initial_pose.position.y
                 reference_pose.position.y = initial_pose.position.y
 
+            # REFERENCE POSITION Z
+            if t < wait:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z
+            elif (t-wait) <= 1:
+                reference_pose.position.z    = initial_pose.position.z + (delta_z/100)*(t-wait)
+                hum_pose_msg.pose.position.z = initial_pose.position.z + (delta_z/100)*(t-wait)
+            elif (t-wait) <= (0.5/cos_freq3) + t_vert + (0.5/cos_freq3) + end_wait + (x5 / vel_return)*0.4:
+                reference_pose.position.z    = initial_pose.position.z + delta_z/100
+                hum_pose_msg.pose.position.z = initial_pose.position.z + delta_z/100
+            else:
+                reference_pose.position.z    = initial_pose.position.z
+                hum_pose_msg.pose.position.z = initial_pose.position.z                      
 
-        # REFERENCE POSITION Z
-        reference_pose.position.z    = initial_pose.position.z + delta_z/100
-        hum_pose_msg.pose.position.z = initial_pose.position.z + delta_z/200
+
 
         
 

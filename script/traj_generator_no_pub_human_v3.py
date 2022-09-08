@@ -273,7 +273,11 @@ def traj_publisher():
 
 
         # REFERENCE POSITION Z
-        reference_pose.position.z    = initial_pose.position.z + delta_z/100
+        # REFERENCE POSITION Z
+        if t < wait:
+            reference_pose.position.z    = initial_pose.position.z
+        else:
+            reference_pose.position.z    = initial_pose.position.z + delta_z/100
         #hum_pose_msg.pose.position.z = initial_pose.position.z
 
         

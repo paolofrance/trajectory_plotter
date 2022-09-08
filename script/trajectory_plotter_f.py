@@ -114,7 +114,7 @@ if __name__ == '__main__':
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
 
     # Define the margin / size of the plot window
-    delta_axis = [0.05, 0.05, 0.20, 0.2, 0.05, 0.4]  # all view
+    delta_axis = [0.05, 0.05, 0.20, 0.2, 0.1, 0.25]  # all view
 
     # wait the param from traj_generator_v3.py
     case_traj2 = input("Insert the traj case (1: linear - 2: sine - 3: S shape) \n")
@@ -158,20 +158,23 @@ if __name__ == '__main__':
             my_plotter.show_nom = False
             my_plotter.ax1.plot(my_plotter.x_nom, my_plotter.y_nom, 'or', label='Robot Target')
             my_plotter.ax2.plot(1, my_plotter.z_nom, 'or', label='Nominal Z')
+            my_plotter.ax2.plot([0.5,1,1.5], [my_plotter.z_nom, my_plotter.z_nom, my_plotter.z_nom], '--r', label='Nominal Z')
 
         if my_plotter.show_cur:
             my_plotter.show_cur = False
             my_plotter.ax1.plot(my_plotter.x_cur, my_plotter.y_cur, 'Xg', markersize='10', label='Your current position')
-            my_plotter.ax2.plot(1, my_plotter.z_cur, 'Xg', label='Current Z')
+            my_plotter.ax2.plot([0.5,1,1.5], [my_plotter.z_cur, my_plotter.z_cur, my_plotter.z_cur], '-g', linewidth=2.5, label='Current Z')
 
         if my_plotter.show_hum:
             my_plotter.show_hum = False
             my_plotter.ax1.plot(my_plotter.x_hum, my_plotter.y_hum, 'ob', label='Human Target')
-            my_plotter.ax2.plot(1, my_plotter.z_hum, 'ob', label='Human Target Z')
+            my_plotter.ax2.plot([0.5,1,1.5], [my_plotter.z_hum, my_plotter.z_hum, my_plotter.z_hum], '--b', label='Human Target Z')
 
         #case_traj = "2"
         amp_traj2 = 0.15
         amp_traj3 = 0.15
+
+        my_plotter.ax2.plot([0.5,1,1.5], [my_plotter.z_0, my_plotter.z_0, my_plotter.z_0], '--k')
 
         plt.draw()
         plt.legend()
@@ -188,6 +191,7 @@ if __name__ == '__main__':
         my_plotter.ax1.set_xlim(axis[0:2])
         my_plotter.ax1.set_ylim(axis[2:4])
         my_plotter.ax2.set_xlim([0, 2])
+        my_plotter.ax2.set_ylim(axis[4:6])
         #my_plotter.ax2.set_xlim(axis[2:4])
         #plt.axis(axis)
         #plt.subplots_adjust(left=0.04, bottom=0.07, right=0.98, top=0.88, wspace=0.06, hspace=0.06)
@@ -195,6 +199,7 @@ if __name__ == '__main__':
         my_plotter.ax1.set_axisbelow(True)
         my_plotter.ax1.grid(True)
         my_plotter.ax2.grid(True)
+
         
         if case_traj2 == "1":
             plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
