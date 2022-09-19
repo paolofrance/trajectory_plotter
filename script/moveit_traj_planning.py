@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
+
+import control_msgs.msg
 from six.moves import input
 
 import sys
 import rospy
 import moveit_commander
 import moveit_msgs.msg
-import geometry_msgs.msg
-import copy
+from std_msgs.msg import Int64
+import actionlib
 
 class MoveGroupPythonInterface(object):
 
@@ -40,34 +42,49 @@ class MoveGroupPythonInterface(object):
     move_group = self.move_group
     move_group.set_pose_target(pose_goal)
 
+    move_group.set_joint_value_target()
+
     [em,plan,pt,mm] = move_group.plan()
     print("plan ok, input")
+    self.display_trajectory(plan)
     input()
+
     move_group.execute(plan, wait=True)
 
     move_group.stop()
     move_group.clear_pose_targets()
 
-  def plan_cartesian_path(self, scale=1):
-    group = self.move_group
-    waypoints = []
+  def go_to_joint_pos(self,joint_goal):
+    # self.move_group.go(joint_goal, wait=True)
+    self.move_group.set_joint_value_target(joint_goal)
+    [em, plan, pt, mm] = self.move_group.plan()
 
-    wpose = group.get_current_pose().pose
-    wpose.position.z -= scale * 0.1  # First move up (z)
-    wpose.position.y += scale * 0.2  # and sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
+    print(plan)
 
-    wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
-    waypoints.append(copy.deepcopy(wpose))
+    print("plan ok, input")
+    input()
 
-    wpose.position.y -= scale * 0.1  # Third move sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
+    client = actionlib.SimpleActionClient('ur5_moveit_lab/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction)
+    print('waitin for ur5_moveit_lab/follow_joint_trajectory')
+    client.wait_for_server()
 
-    (plan, fraction) = group.compute_cartesian_path(
-      waypoints,  # waypoints to follow
-      0.01,  # eef_step
-      0.0)  # jump_threshold
-    return plan, fraction
+    goal = control_msgs.msg.FollowJointTrajectoryGoal
+
+    goal.trajectory = plan
+
+    print(goal)
+
+    client.send_goal(goal)
+
+    print('waitin')
+
+    client.wait_for_result()
+
+
+    # self.move_group.execute(plan, wait=True)
+    # self.move_group.stop()
+    # self.move_group.clear_pose_targets()
+
 
   def display_trajectory(self, plan):
     robot = self.robot
@@ -84,35 +101,36 @@ def main():
   try:
     ur5interface = MoveGroupPythonInterface()
 
-    pub = rospy.Publisher('/target_cart_pose', geometry_msgs.msg.PoseStamped, queue_size=10)
+    jg = ur5interface.move_group.get_current_joint_values()
 
-    current_pose = ur5interface.move_group.get_current_pose(ur5interface.move_group.get_end_effector_link())
-    print(current_pose)
+    print(jg)
 
-    pose_goal = copy.deepcopy(current_pose)
+    joint_goal = [-0.903442684804098, -1.4926427046405237, 1.5631790161132812, -1.6353634039508265, -1.545349423085348, 3.6319174766540527]
 
-    pose_goal.pose.position.y = pose_goal.pose.position.y - 0.1
+    ur5interface.go_to_joint_pos(joint_goal)
 
-    # ur5interface.go_to_pose_goal(pose_goal)
+    print('motion ok. press enter to go home - carefully')
+    input()
 
-    current_pose = ur5interface.move_group.get_current_pose(ur5interface.move_group.get_end_effector_link())
-    print(current_pose)
+    pub = rospy.Publisher('/speed_ovr', Int64, queue_size=10)
+    ovr = 25
+    pub.publish(ovr)
 
-    cartesian_plan, fraction = ur5interface.plan_cartesian_path()
+    jg = [-2.200888458882467, -1.077665154133932, 1.4601397514343262, -1.9271062056170862, -1.5696128050433558, 2.334613561630249]
 
-    ur5interface.display_trajectory(cartesian_plan)
+    ur5interface.go_to_joint_pos(jg)
 
-    rospy.sleep(5)
 
-    ur5interface.move_group.execute(cartesian_plan, wait=True)
-
-    # while not is_in_tolerance(pose_goal, current_pose, pose_tol):
-    #   pub.publish(pose_goal)
-    #   current_pose = ur5interface.move_group.get_current_pose(ur5interface.move_group.get_end_effector_link())
-    #   r.sleep()
+    # current_pose = ur5interface.move_group.get_current_pose(ur5interface.move_group.get_end_effector_link())
+    # print(current_pose)
     #
-    # print("DONE")
-    # rospy.spin()
+    # pose_goal = copy.deepcopy(current_pose)
+    #
+    # pose_goal.pose.position.x = pose_goal.pose.position.x + 0.05
+    # pose_goal.pose.position.y = pose_goal.pose.position.y + 0.0
+    # pose_goal.pose.position.z = pose_goal.pose.position.z - 0.0
+    #
+    # ur5interface.go_to_pose_goal(pose_goal)
 
 
   except rospy.ROSInterruptException:

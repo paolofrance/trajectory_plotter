@@ -19,11 +19,11 @@ MF1='novariation':'trapmf',[0 0 5 15]
 MF2='variation':'trapmf',[5 15 20 20]
 
 [Input2]
-Name='derr'
+Name='velocity'
 Range=[0 0.3]
 NumMFs=2
-MF1='stop':'trapmf',[0 0 0.05 0.25]
-MF2='move':'trapmf',[0.05 0.25 0.3 0.3]
+MF1='stop':'trapmf',[0 0 0.005 0.01]
+MF2='move':'trapmf',[0.005 0.01 0.3 0.3]
 
 [Output1]
 Name='assistance'

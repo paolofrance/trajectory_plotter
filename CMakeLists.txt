@@ -10,6 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs_stamped
   rosdyn_core
+  moveit_core
+  moveit_ros_planning_interface
+  tf_conversions
+  moveit_planning_helper
   )
 
 add_service_files(
@@ -40,6 +44,11 @@ human_traj_estimation src/human_traj_estimation.cpp
 add_executable(human_traj_estimation_node src/human_traj_estimation_node.cpp)
 target_link_libraries( human_traj_estimation_node human_traj_estimation ${catkin_LIBRARIES} fuzzylite)
 add_dependencies(human_traj_estimation_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+add_executable(robot_traj_generator src/robot_traj_generator.cpp)
+target_link_libraries( robot_traj_generator ${catkin_LIBRARIES} )
+add_dependencies(robot_traj_generator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 

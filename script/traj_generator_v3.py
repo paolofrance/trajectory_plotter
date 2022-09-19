@@ -67,7 +67,6 @@ def traj_publisher():
     run = "0"
 
     while run != "stop" and (not rospy.is_shutdown()):
-        record_process = subprocess.Popen("/home/fabio/bag_record.sh")
         t += 1.0/rate
 
         # HUMAN POSE
