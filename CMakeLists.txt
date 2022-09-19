@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   roscpp
-  std_msgs_stamped
+  std_msgs
   rosdyn_core
   )
 
