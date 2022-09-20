@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find trajectory_plotter)/config/robot_traj_params.yaml" />
+<!--   <rosparam command="load" file="$(find trajectory_plotter)/config/traj/trajectories_planned.yaml" /> -->
+  <rosparam command="load" file="$(find trajectory_plotter)/config/traj/trajectories_planned_free.yaml" />
+  <node name="robot_traj_generator" pkg="trajectory_plotter" type="robot_traj_generator" output="screen"/>
+</launch>
+

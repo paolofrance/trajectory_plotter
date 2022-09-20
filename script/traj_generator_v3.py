@@ -122,6 +122,7 @@ def traj_publisher():
     obst_pose_msg.pose.position.x = 0.275
 
     while run != "stop" and (not rospy.is_shutdown()):
+<<<<<<< HEAD
         
         # CREATE THE OBSTACLE
         if t == 0 and rand_obst == True and case_traj == "1":
@@ -139,6 +140,8 @@ def traj_publisher():
             obst_pose_msg.pose.position.y = 0
         
 
+=======
+>>>>>>> paolo_wip
         t += 1.0/rate
 
         # HUMAN POSE

@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <launch>
   <rosparam command="load" file="$(find trajectory_plotter)/config/params.yaml" />
+<<<<<<< HEAD
   <node name="trajectory_plotter" pkg="trajectory_plotter" type="trajectory_plotter_f.py" output="screen"/>
   <node name="traj_generator" pkg="trajectory_plotter" type="traj_generator_v3.py" output="screen"/>
+=======
+  <node name="trajectory_plotter" pkg="trajectory_plotter" type="trajectory_plotter_p.py" output="screen"/>
+<!--  <node name="traj_generator" pkg="trajectory_plotter" type="traj_generator_v2.py" output="screen"/>-->
+  <node name="traj_generator" pkg="trajectory_plotter" type="robot_traj_gen.py" output="screen"/>
+>>>>>>> paolo_wip
 </launch>

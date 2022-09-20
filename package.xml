@@ -12,6 +12,10 @@
   <depend>rospy</depend>
   <depend>roscpp</depend>
   <depend>rosdyn_core</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>tf_conversions</depend>
+  <depend>moveit_planning_helper</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
