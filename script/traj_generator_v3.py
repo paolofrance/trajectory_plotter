@@ -27,19 +27,19 @@ def traj_publisher():
     cpm = CurrentPoseMonitor()
     rospy.sleep(.1)
 
-    nominal_traj_topic = rospy.get_param('nominal_traj_topic')
-    human_traj_topic   = rospy.get_param('human_traj_topic')
+    nominal_traj_topic = "/target_cart_pose"
+    # human_traj_topic   = rospy.get_param('human_traj_topic')
     current_traj_topic = rospy.get_param('current_traj_topic')
     obst_x_coord_topic = rospy.get_param('obst_x_coord_topic')
     current_sub        = rospy.Subscriber(current_traj_topic  , PoseStamped, cpm.current_callback)
 
     print('\n PUBLISHED TOPICS:')
     print(nominal_traj_topic)
-    print(human_traj_topic)
+    # print(human_traj_topic)
     print(obst_x_coord_topic)
 
     nom_pub  = rospy.Publisher(nominal_traj_topic, PoseStamped, queue_size=10)
-    hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size=10)
+    # hum_pub  = rospy.Publisher(human_traj_topic  , PoseStamped, queue_size=10)
     obst_pub = rospy.Publisher(obst_x_coord_topic, PoseStamped, queue_size=10)
     rate     = 125.0
     ros_rate = rospy.Rate(rate)
@@ -74,7 +74,8 @@ def traj_publisher():
     p3 = 0.6            # begin second circ traj in x5%
 
     # Ask if you want a random init pause
-    rand_pause = input("Do you want random initial pause? y/n \n")
+    # rand_pause = input("Do you want random initial pause? y/n \n")
+    rand_pause = "n"
 
     # Time [s] wait time before/after the reference point start/end moving, during these pauses rosbag is recording!
     if rand_pause == 'y' or rand_pause == 'Y':
@@ -93,11 +94,13 @@ def traj_publisher():
     # 3: nom traj "S-shape"   "-sin" -> "vertical line" -> "sin"
 
     # HEIGHT OF NOM.TRAJ FROM STARTING POINT
-    delta_z = input("Insert height of nom. traj from starting point [cm] ( \n")
-    delta_z = int(delta_z)
+    # delta_z = input("Insert height of nom. traj from starting point [cm] ( \n")
+    # delta_z = int(delta_z)
+    delta_z=0
 
     # Run a bash file containing 'rosbag record -a'
-    record = input("Do you want to record? y/n \n")
+    # record = input("Do you want to record? y/n \n")
+    record ="n"
 
     if record == 'y' or record == 'Y':
         record = True
@@ -112,7 +115,8 @@ def traj_publisher():
         print("Script is running - NO ACQUISITION \n")
     rec = record
 
-    rnd_obs = input("Do you want rand obstacle? y/n \n")
+    # rnd_obs = input("Do you want rand obstacle? y/n \n")
+    rnd_obs = "y"
     if rnd_obs == 'y' or rnd_obs == 'Y':
         rand_obst = True
     else:
@@ -122,8 +126,7 @@ def traj_publisher():
     obst_pose_msg.pose.position.x = 0.275
 
     while run != "stop" and (not rospy.is_shutdown()):
-<<<<<<< HEAD
-        
+
         # CREATE THE OBSTACLE
         if t == 0 and rand_obst == True and case_traj == "1":
             obst_pose_msg.pose.position.x = (np.random.randint(100, 400, 1) / 1000) - 0.03
@@ -140,8 +143,6 @@ def traj_publisher():
             obst_pose_msg.pose.position.y = 0
         
 
-=======
->>>>>>> paolo_wip
         t += 1.0/rate
 
         # HUMAN POSE
@@ -333,7 +334,7 @@ def traj_publisher():
         nom_pose_msg.pose         = reference_pose
         nom_pose_msg.header.stamp = stamp
 
-        hum_pub.publish(hum_pose_msg)
+        # hum_pub.publish(hum_pose_msg)
         nom_pub.publish(nom_pose_msg)
         obst_pub.publish(obst_pose_msg)
         ros_rate.sleep()

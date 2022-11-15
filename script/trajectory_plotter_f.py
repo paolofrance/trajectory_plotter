@@ -90,7 +90,13 @@ def human_target(x1, x2, x3, x4, x5, ampl):
     x_human_target = np.arange(0, x5, 0.001)
 
     y1   = np.full(int(x1 * 1000), 0)
-    x_12 = np.linspace(start=x1, stop=x2, num=round((x2 - x1), 2) * 1000, endpoint=False)
+
+    print("x1: " + str(x1) + " x2: " + str(x2)+ " round: " + str(round((x2 - x1), 2) * 1000))
+    print(type(x1))
+    print(type(x2))
+    print(type(int(round((x2 - x1), 2) * 1000)))
+
+    x_12 = np.linspace(start=x1, stop=x2, num=int(round((x2 - x1), 2) * 1000), endpoint=False)
     y2   = ampl * 0.5 * (1 - np.cos(np.pi * (x_12 - x1) / (x2 - x1)))
     y3   = np.full(int(round((x3 - x2), 2) * 1000), ampl)
     x_34 = np.linspace(start=x3, stop=x4, num=round((x4 - x3), 2) * 1000, endpoint=False)
@@ -103,7 +109,7 @@ def human_target(x1, x2, x3, x4, x5, ampl):
 
 
 if __name__ == '__main__':
-    X_ht, Y_ht = human_target(x1=0.10, x2=0.25, x3=0.30, x4=0.45, x5=0.50, ampl=0.08)
+    # X_ht, Y_ht = human_target(x1=0.10, x2=0.25, x3=0.30, x4=0.45, x5=0.50, ampl=0.08)
 
     start_point = 0
     end_point = 0.5
@@ -231,8 +237,8 @@ if __name__ == '__main__':
             plt.plot(x, y, '--r', linewidth=1.2)   # label='Nominal robot')
 
 
-        if not free_trajectory:
-            plt.plot(X_ht + my_plotter.x_0, Y_ht + my_plotter.y_0, '--b', linewidth=1.2, label='Human target')
+        # if not free_trajectory:
+        #     plt.plot(X_ht + my_plotter.x_0, Y_ht + my_plotter.y_0, '--b', linewidth=1.2, label='Human target')
         if h_line:
             plt.plot(np.linspace(my_plotter.x_0, my_plotter.x_0 + end_point, 100),
                      np.full(100, my_plotter.y_0 + 0.08), '--b', linewidth=1, label='Please stay below this line')
